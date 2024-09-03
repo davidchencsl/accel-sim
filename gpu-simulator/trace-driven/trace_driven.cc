@@ -644,6 +644,14 @@ void trace_shader_core_ctx::func_exec_inst(warp_inst_t &inst) {
   // here, we generate memory acessess and set the status if thread (done?)
   if (inst.is_load() || inst.is_store()) {
     inst.generate_mem_accesses();
+    /***** ECE511MP2 *****/
+    this->m_gpu->num_coalesced_accesses += inst.m_num_coalesced_accesses;
+    this->m_gpu->num_uncoalesced_accesses += inst.m_num_uncoalesced_accesses;
+    this->m_gpu->num_coalesced_load += inst.m_num_coalesced_load;
+    this->m_gpu->num_uncoalesced_load += inst.m_num_uncoalesced_load;
+    this->m_gpu->num_coalesced_store += inst.m_num_coalesced_store;
+    this->m_gpu->num_uncoalesced_store += inst.m_num_uncoalesced_store;
+    /***** end ECE511MP2 *****/
   }
 
   trace_shd_warp_t *m_trace_warp =

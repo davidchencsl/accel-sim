@@ -26,6 +26,12 @@ collect_aggregate:
     - 'kernel_launch_uid\s*=\s*(.*)'
     - 'gpgpu_n_shmem_bkconflict\s*=\s*(.*)'
     - 'gpgpu_n_l1cache_bkconflict\s*=\s*(.*)'
+    - 'num_tot_coalesced_accesses\s*=\s*(.*)'
+    - 'num_tot_uncoalesced_accesses\s*=\s*(.*)'
+    - 'num_coalesced_load\s*=\s*(.*)'
+    - 'num_coalesced_store\s*=\s*(.*)'
+    - 'num_uncoalesced_load\s*=\s*(.*)'
+    - 'num_uncoalesced_store\s*=\s*(.*)'
 
 
 # These stats are reset each kernel and should not be diff'd
@@ -42,3 +48,7 @@ collect_rates:
     - 'gpgpu_simulation_rate\s+=\s+(.*)\s+\(cycle\/sec\)'
     - 'gpgpu_silicon_slowdown\s*=\s*(.*)x'
     - 'gpu_tot_ipc\s*=\s*(.*)'
+    - 'L2_BW_total\s*=\s*(.*)\s+GB\/Sec'
+    - 'gpu_tot_occupancy\s*=\s*(.*)%'
+    - '\s+L1D_total_cache_miss_rate\s*=\s*(.*)'
+    - 'L2_total_cache_miss_rate\s*=\s*(.*)'

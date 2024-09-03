@@ -1,53 +1,8 @@
-# Basefile Configs
+# ECE 511 Spring 2024 MP2 Configs
 
-# Pascal
-TITANX:
-    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM6_TITANX/gpgpusim.config"
-
-TITANXX:
-    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/TITANX-pascal/gpgpusim.config"
-
-#Kepler
-TITANK:
-    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM3_KEPLER_TITAN/gpgpusim.config"
-
-#Ampere RTX 3070
-RTX3070:
-    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM86_RTX3070/gpgpusim.config"
-
-RTX3090Ti:
-    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM8_RTX3090Ti/gpgpusim.config"
-
-#Turing
-RTX2060:
-    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM75_RTX2060/gpgpusim.config"
-
-#Turing
-RTX2060_S:
-    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM75_RTX2060_S/gpgpusim.config"
-
-# Volta
-TITANV:
+# Use TITANV as baseline config
+ECE511_TITANV:
     base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM7_TITANV/gpgpusim.config"
-
-# Volta
-TITANV_OLD:
-    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM7_TITANV_OLD/gpgpusim.config"
-
-QV100:
-    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM7_QV100/gpgpusim.config"
-
-QV100_64SM:
-    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM7_QV100_SMs/gpgpusim.config"
-
-QV100_old:
-    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM7_QV100_old/gpgpusim.config"
-GV100:
-    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM7_GV100/gpgpusim.config"
-
-# Fermi
-GTX480:
-    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM2_GTX480/gpgpusim.config"
 
 # To keep your configurations straight - we recommend specifying
 # If you are using SASS or PTX in the config:
@@ -63,6 +18,23 @@ PTX:
 # Extra configs - these are composable.
 # The names here will be appended to the basefile name with hyphens
 #   For example TITANX-L1ON-PTXPLUS
+
+####### ECE 511 MP2 #######
+
+### SM cluster and mem channels
+#   default config for TITANV:
+#       -gpgpu_n_clusters 40    # SM cluster count
+#       -gpgpu_n_cores_per_cluster 2    # SM per cluster
+#       -gpgpu_n_mem 24   # memory channel count
+SM_120:
+    extra_params: "-gpgpu_n_clusters 60 -gpgpu_n_cores_per_cluster 2"
+SM_160:
+    extra_params: "-gpgpu_n_clusters 80 -gpgpu_n_cores_per_cluster 2"
+SM_200:
+    extra_params: "-gpgpu_n_clusters 100 -gpgpu_n_cores_per_cluster 2"
+
+##### End ECE 511 MP2 #####
+
 MULTI_KERNEL:
     extra_params: "-gpgpu_concurrent_kernel_sm 1"
 
@@ -156,33 +128,3 @@ FRFCFS:
 
 FCFS:
     extra_params: "-gpgpu_dram_scheduler 0"
-
-# Experimental - for SM 60 PTXplus support
-PTXPLUS_SM6:
-    extra_params: "-gpgpu_ptx_convert_to_ptxplus 1 -gpgpu_ptx_force_max_capability 62 -gpgpu_ptx_force_min_capability 60"
-
-#Accelwattch configs
-Accelwattch_SASS_SIM:
-    extra_params: "-power_simulation_enabled 1
-    \n-power_simulation_mode 0
-    \n-accelwattch_xml_file accelwattch_sass_sim.xml"
-
-Accelwattch_SASS_HW:
-    extra_params: "-power_simulation_enabled 1
-    \n-power_simulation_mode 1
-    \n-accelwattch_xml_file accelwattch_sass_hw.xml"
-
-Accelwattch_SASS_HYBRID:
-    extra_params: "-power_simulation_enabled 1
-    \n-power_simulation_mode 2
-    \n-accelwattch_xml_file accelwattch_sass_hybrid.xml
-    \n-accelwattch_hybrid_perfsim_L2_RH 1
-    \n-accelwattch_hybrid_perfsim_L2_RM 1
-    \n-accelwattch_hybrid_perfsim_L2_WH 1
-    \n-accelwattch_hybrid_perfsim_L2_WM 1
-    \n-accelwattch_hybrid_perfsim_NOC 1"
-
-Accelwattch_PTX_SIM:
-    extra_params: "-power_simulation_enabled 1
-    \n-power_simulation_mode 0
-    \n-accelwattch_xml_file accelwattch_ptx_sim.xml"

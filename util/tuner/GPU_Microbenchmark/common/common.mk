@@ -15,12 +15,13 @@ CUOPTS =  $(GENCODE_ARCH) $(GENCODE_SM50) $(GENCODE_SM60) $(GENCODE_SM62) $(GENC
 
 CC := nvcc
 
-CUDA_PATH ?= /use/local/cuda-10.1/
+CUDA_PATH ?= /usr/local/cuda/
 INCLUDE := $(CUDA_PATH)/samples/common/inc/
-LIB :=
+LIB := 
+EXTRA_NVCC_FLAGS = 
 
 release:
-	$(CC) $(NVCC_FLGAS) $(CUOPTS) $(SRC) -o $(EXE) -I$(INCLUDE) -L$(LIB) -lcudart
+	$(CC) $(NVCC_FLGAS) $(EXTRA_NVCC_FLAGS) $(CUOPTS) $(SRC) -o $(EXE) -I$(INCLUDE) -L$(LIB) -lcudart
 	cp $(EXE) $(BIN_DIR)
 
 clean:

@@ -1,0 +1,170 @@
+diff --git a/src/abstract_hardware_model.cc b/src/abstract_hardware_model.cc
+index ed7347de..7d74278c 100644
+--- a/src/abstract_hardware_model.cc
++++ b/src/abstract_hardware_model.cc
+@@ -535,6 +535,15 @@ void warp_inst_t::memory_coalescing_arch(bool is_write,
+            (access < MAX_ACCESSES_PER_INSN_PER_THREAD) &&
+            (m_per_scalar_thread[thread].memreqaddr[access] != 0);
+            access++) {
++
++        /***** ECE511MP2: count uncoalesced accesses *****/
++        this->m_num_uncoalesced_accesses++;
++        if (this->is_load())
++        this->m_num_uncoalesced_load++;
++        if (this->is_store())
++        this->m_num_uncoalesced_store++;
++        /***** end ECE511MP2 modifications *****/
++
+         new_addr_type addr = m_per_scalar_thread[thread].memreqaddr[access];
+         new_addr_type block_address =
+             line_size_based_tag_func(addr, segment_size);
+@@ -571,6 +580,13 @@ void warp_inst_t::memory_coalescing_arch(bool is_write,
+         }
+       }
+     }
++    /***** ECE511MP2: count coalesced accesses *****/
++    this->m_num_coalesced_accesses += subwarp_transactions.size();
++    if (this->is_load())
++    this->m_num_coalesced_load += subwarp_transactions.size();
++    if (this->is_store())
++    this->m_num_coalesced_store += subwarp_transactions.size();
++    /***** end ECE511MP2 modifications *****/
+ 
+     // step 2: reduce each transaction size, if possible
+     std::map<new_addr_type, transaction_info>::iterator t;
+@@ -660,6 +676,14 @@ void warp_inst_t::memory_coalescing_arch_atomic(bool is_write,
+         // Need a new transaction
+         subwarp_transactions[block_address].push_back(transaction_info());
+         info = &subwarp_transactions[block_address].back();
++
++        /***** ECE511MP2: count uncoalesced accesses *****/
++        this->m_num_uncoalesced_accesses++;
++        if (this->is_load())
++        this->m_num_uncoalesced_load++;
++        if (this->is_store())
++        this->m_num_uncoalesced_store++;
++        /***** end ECE511MP2 modifications *****/
+       }
+       assert(info);
+ 
+@@ -672,6 +696,16 @@ void warp_inst_t::memory_coalescing_arch_atomic(bool is_write,
+       }
+     }
+ 
++    /***** ECE511MP2: count coalesced accesses *****/
++    for (auto& t : subwarp_transactions) {
++    this->m_num_coalesced_accesses += t.second.size();
++    if (this->is_load())
++    this->m_num_coalesced_load += t.second.size();
++    if (this->is_store())
++    this->m_num_coalesced_store += t.second.size();
++    }
++    /***** end ECE511MP2 modifications *****/
++
+     // step 2: reduce each transaction size, if possible
+     std::map<new_addr_type, std::list<transaction_info> >::iterator t_list;
+     for (t_list = subwarp_transactions.begin();
+diff --git a/src/abstract_hardware_model.h b/src/abstract_hardware_model.h
+index ebf6535e..07731a56 100644
+--- a/src/abstract_hardware_model.h
++++ b/src/abstract_hardware_model.h
+@@ -947,6 +947,12 @@ class inst_t {
+     const_cache_operand = 0;
+     num_operands = 0;
+     num_regs = 0;
++    m_num_coalesced_accesses = 0;
++    m_num_uncoalesced_accesses = 0;
++    m_num_coalesced_load = 0;
++    m_num_coalesced_store = 0;
++    m_num_uncoalesced_load = 0;
++    m_num_uncoalesced_store = 0;
+     memset(out, 0, sizeof(unsigned));
+     memset(in, 0, sizeof(unsigned));
+     is_vectorin = 0;
+@@ -1018,6 +1024,13 @@ class inst_t {
+   address_type reconvergence_pc;  // -1 => not a branch, -2 => use function
+                                   // return address
+ 
++  unsigned long long m_num_coalesced_accesses;
++  unsigned long long m_num_uncoalesced_accesses;
++  unsigned long long m_num_coalesced_load;
++  unsigned long long m_num_coalesced_store;
++  unsigned long long m_num_uncoalesced_load;
++  unsigned long long m_num_uncoalesced_store;
++
+   unsigned out[8];
+   unsigned outcount;
+   unsigned in[24];
+diff --git a/src/gpgpu-sim/gpu-sim.cc b/src/gpgpu-sim/gpu-sim.cc
+index 47c0b4a8..22ec7369 100644
+--- a/src/gpgpu-sim/gpu-sim.cc
++++ b/src/gpgpu-sim/gpu-sim.cc
+@@ -1100,6 +1100,13 @@ void gpgpu_sim::init() {
+   partiton_reqs_in_parallel_util = 0;
+   gpu_sim_cycle_parition_util = 0;
+ 
++  num_coalesced_accesses = 0;
++  num_uncoalesced_accesses = 0;
++  num_coalesced_load = 0;
++  num_coalesced_store = 0;
++  num_uncoalesced_load = 0;
++  num_uncoalesced_store = 0;
++
+ // McPAT initialization function. Called on first launch of GPU
+ #ifdef GPGPUSIM_POWER_MODEL
+   if (m_config.g_power_simulation_enabled) {
+@@ -1373,6 +1380,14 @@ void gpgpu_sim::gpu_print_stat() {
+   printf("gpu_stall_dramfull = %d\n", gpu_stall_dramfull);
+   printf("gpu_stall_icnt2sh    = %d\n", gpu_stall_icnt2sh);
+ 
++  // coalesce memory access counter
++  printf("num_tot_coalesced_accesses = %lld\n", num_coalesced_accesses);
++  printf("num_tot_uncoalesced_accesses = %lld\n", num_uncoalesced_accesses);
++  printf("num_coalesced_load = %lld\n", num_coalesced_load);
++  printf("num_coalesced_store = %lld\n", num_coalesced_store);
++  printf("num_uncoalesced_load = %lld\n", num_uncoalesced_load);
++  printf("num_uncoalesced_store = %lld\n", num_uncoalesced_store);
++
+   // printf("partiton_reqs_in_parallel = %lld\n", partiton_reqs_in_parallel);
+   // printf("partiton_reqs_in_parallel_total    = %lld\n",
+   // partiton_reqs_in_parallel_total );
+diff --git a/src/gpgpu-sim/gpu-sim.h b/src/gpgpu-sim/gpu-sim.h
+index de69ef8c..82bd8400 100644
+--- a/src/gpgpu-sim/gpu-sim.h
++++ b/src/gpgpu-sim/gpu-sim.h
+@@ -604,6 +604,16 @@ class gpgpu_sim : public gpgpu_t {
+   // backward pointer
+   class gpgpu_context *gpgpu_ctx;
+ 
++  // coalesce memory access
++
++  unsigned long long num_coalesced_accesses = 0; // total # after coalescing
++  unsigned long long num_uncoalesced_accesses = 0; // total # before coalescing
++  unsigned long long num_coalesced_load = 0; // # of reads after coalescing
++  unsigned long long num_coalesced_store = 0; // # of writes after coalescing
++  unsigned long long num_uncoalesced_load = 0; // # of reads before coalescing
++  unsigned long long num_uncoalesced_store = 0; // # of writes before coalescing
++
++
+  private:
+   // clocks
+   void reinit_clock_domains(void);
+diff --git a/src/gpgpu-sim/shader.cc b/src/gpgpu-sim/shader.cc
+index 67540e08..2527d9fc 100644
+--- a/src/gpgpu-sim/shader.cc
++++ b/src/gpgpu-sim/shader.cc
+@@ -1024,6 +1024,14 @@ void exec_shader_core_ctx::func_exec_inst(warp_inst_t &inst) {
+   if (inst.is_load() || inst.is_store()) {
+     inst.generate_mem_accesses();
+     // inst.print_m_accessq();
++    /***** ECE511MP2 *****/
++    this->m_gpu->num_coalesced_accesses += inst.m_num_coalesced_accesses;
++    this->m_gpu->num_uncoalesced_accesses += inst.m_num_uncoalesced_accesses;
++    this->m_gpu->num_coalesced_load += inst.m_num_coalesced_load;
++    this->m_gpu->num_uncoalesced_load += inst.m_num_uncoalesced_load;
++    this->m_gpu->num_coalesced_store += inst.m_num_coalesced_store;
++    this->m_gpu->num_uncoalesced_store += inst.m_num_uncoalesced_store;
++    /***** end ECE511MP2 *****/
+   }
+ }
+ 

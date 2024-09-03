@@ -298,6 +298,8 @@ for idx, app_and_args in enumerate(apps_and_args):
         if not os.path.isfile(outfile):
             print("WARNING - " + outfile + " does not exist", file=sys.stderr)
             continue
+        
+        #print("Parsing " + outfile, file=sys.stderr)
 
         # Do a quick 100-line pass to get the GPGPU-Sim Version number
         MAX_LINES = 100

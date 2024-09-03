@@ -1,0 +1,177 @@
+# To keep your configurations straight - we recommend specifying
+# If you are using SASS or PTX in the config:
+#   For example: QV100-SASS or QV100-PTX.
+SASS:
+    extra_params: "#SASS-Driven Accel-Sim"
+
+PTX:
+    extra_params: "#PTX-Driven GPGPU-Sim"
+
+MULTI_KERNEL:
+    extra_params: "-gpgpu_concurrent_kernel_sm 1"
+
+64SM:
+    extra_params: "-gpgpu_n_clusters 64"
+
+PTXPLUS:
+    extra_params: "-gpgpu_ptx_convert_to_ptxplus 1 -gpgpu_ptx_force_max_capability 10"
+
+SM_2:
+    extra_params: "-gpgpu_ptx_force_max_capability 20"
+
+L1ON:
+    extra_params: "-gmem_skip_L1D 0"
+
+L1OFF:
+    extra_params: "-gmem_skip_L1D 1"
+
+COPYK:
+    extra_params: "-perf_sim_memcpy 1"
+
+NCOPYK:
+    extra_params: "-perf_sim_memcpy 0"
+
+5B_INSN:
+    extra_params: "-gpgpu_max_insn 5000000000"
+
+2B_INSN:
+    extra_params: "-gpgpu_max_insn 2000000000"
+
+1B_INSN:
+    extra_params: "-gpgpu_max_insn 1000000000"
+
+
+100M_INSN:
+    extra_params: "-gpgpu_max_insn 100000000"
+
+FLUSHL1:
+    extra_params: "-gpgpu_flush_l1_cache 1"
+
+PWR_ENABLE:
+    extra_params: "-power_simulation_enabled 1"
+
+LOCALXBAR:
+    extra_params: "-network_mode 2 -icnt_in_buffer_limit 512  -icnt_out_buffer_limit 512  -icnt_subnets 2"
+
+BOOKSIM:
+    extra_params: "-network_mode 1 -inter_config_file config_volta_islip.icnt"
+
+1455MHZ:
+    extra_params: "-gpgpu_clock_domains 1455.0:1455.0:1455.0:850.0"
+
+1132MHZ:
+    extra_params: "-gpgpu_clock_domains 1132.0:1132.0:1132.0:850.0"
+
+LINEAR:
+    extra_params: "-memory_partition_indexing 0"
+
+XOR:
+    extra_params: "-memory_partition_indexing 1"
+
+RANDOM:
+    extra_params: "-memory_partition_indexing 4"
+
+PAE:
+    extra_params: "-memory_partition_indexing 3"
+
+IPOLY:
+    extra_params: "-memory_partition_indexing 2"
+
+VISUAL:
+    extra_params: "-visualizer_enabled 1"
+
+RR:
+    extra_params: "-gpgpu_scheduler lrr"
+
+GTO:
+    extra_params: "-gpgpu_scheduler gto"
+
+128B:
+    extra_params: "-gpgpu_mem_addr_mapping dramid@7;00000000.00000000.00000000.00000000.0000RRRR.RRRRRRRR.RBBBCCCC.BCCSSSSS"
+
+256B:
+    extra_params: "-gpgpu_mem_addr_mapping dramid@8;00000000.00000000.00000000.00000000.0000RRRR.RRRRRRRR.RBBBCCCB.CCCSSSSS"
+
+32B:
+    extra_params: "-gpgpu_mem_addr_mapping dramid@5;00000000.00000000.00000000.00000000.0000RRRR.RRRRRRRR.RBBBCCCC.BCCSSSSS"
+
+FRFCFS:
+    extra_params: "-gpgpu_dram_scheduler 1"
+
+FCFS:
+    extra_params: "-gpgpu_dram_scheduler 0"
+
+# A100:
+#     base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/GPU_config/gpgpusim.config"
+  
+# V100:
+#     base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM7_QV100/gpgpusim.config"ece511_polybench_nmem=32:
+
+ece511_polybench_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=32/gpgpusim.config"
+ece511_polybench_nmem=64:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=64/gpgpusim.config"
+ece511_polybench_nmem=128:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=128/gpgpusim.config"
+ece511_polybench_nmem=256:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=256/gpgpusim.config"
+ece511_polybench_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=32/gpgpusim.config"
+ece511_polybench_nmem=64:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=64/gpgpusim.config"
+ece511_polybench_nmem=128:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=128/gpgpusim.config"
+ece511_polybench_nmem=256:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=256/gpgpusim.config"
+ece511_polybench_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=32/gpgpusim.config"
+ece511_polybench_nmem=64:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=64/gpgpusim.config"
+ece511_polybench_nmem=128:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=128/gpgpusim.config"
+ece511_polybench_nmem=256:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=256/gpgpusim.config"
+ece511_polybench_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=32/gpgpusim.config"
+ece511_polybench_nmem=64:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=64/gpgpusim.config"
+ece511_polybench_nmem=128:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=128/gpgpusim.config"
+ece511_polybench_nmem=256:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=256/gpgpusim.config"
+ece511_polybench_nmem=32-SASS:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=32-SASS/gpgpusim.config"
+ece511_polybench_nmem=32-SASS:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=32-SASS/gpgpusim.config"
+ece511_polybench_nmem=64-SASS:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=64-SASS/gpgpusim.config"
+ece511_polybench_nmem=128-SASS:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=128-SASS/gpgpusim.config"
+ece511_polybench_nmem=256-SASS:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=256-SASS/gpgpusim.config"
+ece511_polybench_nmem=32-SASS:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=32-SASS/gpgpusim.config"
+ece511_polybench_nmem=64-SASS:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=64-SASS/gpgpusim.config"
+ece511_polybench_nmem=128-SASS:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=128-SASS/gpgpusim.config"
+ece511_polybench_nmem=256-SASS:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=256-SASS/gpgpusim.config"
+ece511_polybench_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=32/gpgpusim.config"
+ece511_polybench_nmem=64:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=64/gpgpusim.config"
+ece511_polybench_nmem=128:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=128/gpgpusim.config"
+ece511_polybench_nmem=256:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=256/gpgpusim.config"
+ece511_polybench_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=32/gpgpusim.config"
+ece511_polybench_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=32/gpgpusim.config"
+ece511_polybench_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/ece511_polybench_nmem=32/gpgpusim.config"
+llama3_8b_d1_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_nmem=32/gpgpusim.config"
+llama3_8b_d1_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_nmem=32/gpgpusim.config"

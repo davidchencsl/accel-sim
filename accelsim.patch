@@ -1,0 +1,252 @@
+diff --git a/gpu-simulator/trace-driven/trace_driven.cc b/gpu-simulator/trace-driven/trace_driven.cc
+index ff00351..e811863 100644
+--- a/gpu-simulator/trace-driven/trace_driven.cc
++++ b/gpu-simulator/trace-driven/trace_driven.cc
+@@ -619,6 +619,14 @@ void trace_shader_core_ctx::func_exec_inst(warp_inst_t &inst) {
+   // here, we generate memory acessess and set the status if thread (done?)
+   if (inst.is_load() || inst.is_store()) {
+     inst.generate_mem_accesses();
++    /***** ECE511MP2 *****/
++    this->m_gpu->num_coalesced_accesses += inst.m_num_coalesced_accesses;
++    this->m_gpu->num_uncoalesced_accesses += inst.m_num_uncoalesced_accesses;
++    this->m_gpu->num_coalesced_load += inst.m_num_coalesced_load;
++    this->m_gpu->num_uncoalesced_load += inst.m_num_uncoalesced_load;
++    this->m_gpu->num_coalesced_store += inst.m_num_coalesced_store;
++    this->m_gpu->num_uncoalesced_store += inst.m_num_uncoalesced_store;
++    /***** end ECE511MP2 *****/
+   }
+ 
+   trace_shd_warp_t *m_trace_warp =
+diff --git a/util/job_launching/apps/define-ece511-apps.yml b/util/job_launching/apps/define-ece511-apps.yml
+new file mode 100644
+index 0000000..20331a4
+--- /dev/null
++++ b/util/job_launching/apps/define-ece511-apps.yml
+@@ -0,0 +1,44 @@
++##### Benchmark configs for ECE 511 Spring 2024 MP2
++
++#   execs:
++#       - <exec_name_1>:
++#           - args: <commandline arg_list 1> # Leave blank if no arguments
++#             <optional> accel-sim-mem: <xG>
++#           - args: <commandline arg_list 2>
++#           ...
++#       - <exec_name_2>
++#           ...
++#       ...
++# If you have a bunch of random benchmarks in random places, then a "suite" can be just one benchmark
++
++ece511-test:
++    exec_dir: "$GPUAPPS_ROOT/bin/$CUDA_VERSION/release/"
++    data_dirs: "$GPUAPPS_ROOT/data_dirs/cuda/rodinia/3.1/"
++    execs:
++        - nn-rodinia-3.1:   # 1.6MB
++            - args:  ./data/filelist_4 -r 5 -lat 30 -lng 90
++              accel-sim-mem: 2G
++
++ece511-rodinia-3.1:
++    exec_dir: "$GPUAPPS_ROOT/bin/$CUDA_VERSION/release/"
++    data_dirs: "$GPUAPPS_ROOT/data_dirs/cuda/rodinia/3.1/"
++    execs:
++        - hotspot-rodinia-3.1:  # 535MB
++            - args:  1024 2 2 ./data/temp_1024 ./data/power_1024 output.out
++              accel-sim-mem: 1G
++
++ece511-parboil:
++    exec_dir: "$GPUAPPS_ROOT/bin/$CUDA_VERSION/release/"
++    data_dirs: "$GPUAPPS_ROOT/data_dirs/parboil/"
++    execs:
++        - parboil-sgemm:    # 2.1GB
++            - args: -i ./data/medium/input/matrix1.txt,./data/medium/input/matrix2t.txt,./data/medium/input/matrix2t.txt -o matrix3.txt
++              accel-sim-mem: 8G
++
++ece511-polybench:
++    exec_dir: "$GPUAPPS_ROOT/bin/$CUDA_VERSION/release/"
++    data_dirs: "$GPUAPPS_ROOT/data_dirs/"
++    execs:
++        - polybench-2DConvolution:  # 803MB
++            - args: 
++              accel-sim-mem: 1G
+diff --git a/util/job_launching/configs/define-ece511-cfgs.yml b/util/job_launching/configs/define-ece511-cfgs.yml
+new file mode 100644
+index 0000000..769ca0d
+--- /dev/null
++++ b/util/job_launching/configs/define-ece511-cfgs.yml
+@@ -0,0 +1,130 @@
++# ECE 511 Spring 2024 MP2 Configs
++
++# Use TITANV as baseline config
++ECE511_TITANV:
++    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM7_TITANV/gpgpusim.config"
++
++# To keep your configurations straight - we recommend specifying
++# If you are using SASS or PTX in the config:
++#   For example: QV100-SASS or QV100-PTX.
++SASS:
++    extra_params: "#SASS-Driven Accel-Sim"
++
++PTX:
++    extra_params: "#PTX-Driven GPGPU-Sim"
++
++############################################################################
++
++# Extra configs - these are composable.
++# The names here will be appended to the basefile name with hyphens
++#   For example TITANX-L1ON-PTXPLUS
++
++####### ECE 511 MP2 #######
++
++### SM cluster and mem channels
++#   default config for TITANV:
++#       -gpgpu_n_clusters 40    # SM cluster count
++#       -gpgpu_n_cores_per_cluster 2    # SM per cluster
++#       -gpgpu_n_mem 24   # memory channel count
++SM_120:
++    extra_params: "-gpgpu_n_clusters 60 -gpgpu_n_cores_per_cluster 2"
++SM_160:
++    extra_params: "-gpgpu_n_clusters 80 -gpgpu_n_cores_per_cluster 2"
++SM_200:
++    extra_params: "-gpgpu_n_clusters 100 -gpgpu_n_cores_per_cluster 2"
++
++##### End ECE 511 MP2 #####
++
++MULTI_KERNEL:
++    extra_params: "-gpgpu_concurrent_kernel_sm 1"
++
++64SM:
++    extra_params: "-gpgpu_n_clusters 64"
++
++PTXPLUS:
++    extra_params: "-gpgpu_ptx_convert_to_ptxplus 1 -gpgpu_ptx_force_max_capability 10"
++
++SM_2:
++    extra_params: "-gpgpu_ptx_force_max_capability 20"
++
++L1ON:
++    extra_params: "-gmem_skip_L1D 0"
++
++L1OFF:
++    extra_params: "-gmem_skip_L1D 1"
++
++COPYK:
++    extra_params: "-perf_sim_memcpy 1"
++
++NCOPYK:
++    extra_params: "-perf_sim_memcpy 0"
++
++5B_INSN:
++    extra_params: "-gpgpu_max_insn 5000000000"
++
++2B_INSN:
++    extra_params: "-gpgpu_max_insn 2000000000"
++
++1B_INSN:
++    extra_params: "-gpgpu_max_insn 1000000000"
++
++
++100M_INSN:
++    extra_params: "-gpgpu_max_insn 100000000"
++
++FLUSHL1:
++    extra_params: "-gpgpu_flush_l1_cache 1"
++
++PWR_ENABLE:
++    extra_params: "-power_simulation_enabled 1"
++
++LOCALXBAR:
++    extra_params: "-network_mode 2 -icnt_in_buffer_limit 512  -icnt_out_buffer_limit 512  -icnt_subnets 2"
++
++BOOKSIM:
++    extra_params: "-network_mode 1 -inter_config_file config_volta_islip.icnt"
++
++1455MHZ:
++    extra_params: "-gpgpu_clock_domains 1455.0:1455.0:1455.0:850.0"
++
++1132MHZ:
++    extra_params: "-gpgpu_clock_domains 1132.0:1132.0:1132.0:850.0"
++
++LINEAR:
++    extra_params: "-memory_partition_indexing 0"
++
++XOR:
++    extra_params: "-memory_partition_indexing 1"
++
++RANDOM:
++    extra_params: "-memory_partition_indexing 4"
++
++PAE:
++    extra_params: "-memory_partition_indexing 3"
++
++IPOLY:
++    extra_params: "-memory_partition_indexing 2"
++
++VISUAL:
++    extra_params: "-visualizer_enabled 1"
++
++RR:
++    extra_params: "-gpgpu_scheduler lrr"
++
++GTO:
++    extra_params: "-gpgpu_scheduler gto"
++
++128B:
++    extra_params: "-gpgpu_mem_addr_mapping dramid@7;00000000.00000000.00000000.00000000.0000RRRR.RRRRRRRR.RBBBCCCC.BCCSSSSS"
++
++256B:
++    extra_params: "-gpgpu_mem_addr_mapping dramid@8;00000000.00000000.00000000.00000000.0000RRRR.RRRRRRRR.RBBBCCCB.CCCSSSSS"
++
++32B:
++    extra_params: "-gpgpu_mem_addr_mapping dramid@5;00000000.00000000.00000000.00000000.0000RRRR.RRRRRRRR.RBBBCCCC.BCCSSSSS"
++
++FRFCFS:
++    extra_params: "-gpgpu_dram_scheduler 1"
++
++FCFS:
++    extra_params: "-gpgpu_dram_scheduler 0"
+diff --git a/util/job_launching/get_stats.py b/util/job_launching/get_stats.py
+index b8156a4..8da85a9 100755
+--- a/util/job_launching/get_stats.py
++++ b/util/job_launching/get_stats.py
+@@ -157,7 +157,7 @@ else:
+     for logfile in parsed_logfiles:
+         if not os.path.isfile(logfile):
+             exit("Cannot open Logfile " + logfile)
+-
++    
+         with open( logfile ) as f:
+             added_cfgs = set()
+             added_apps = set()
+@@ -202,6 +202,8 @@ for idx, app_and_args in enumerate(apps_and_args):
+         if not os.path.isfile( outfile ):
+             print("WARNING - " + outfile + " does not exist", file=sys.stderr)
+             continue
++        
++        #print("Parsing " + outfile, file=sys.stderr)
+ 
+         # Do a quick 100-line pass to get the GPGPU-Sim Version number
+         MAX_LINES = 100
+diff --git a/util/job_launching/stats/example_stats.yml b/util/job_launching/stats/example_stats.yml
+index 5b3a523..7f08231 100644
+--- a/util/job_launching/stats/example_stats.yml
++++ b/util/job_launching/stats/example_stats.yml
+@@ -24,6 +24,12 @@ collect_aggregate:
+     - 'total dram reads\s*=\s*(.*)'
+     - 'total dram writes\s*=\s*(.*)'
+     - 'kernel_launch_uid\s*=\s*(.*)'
++    - 'num_tot_coalesced_accesses\s*=\s*(.*)'
++    - 'num_tot_uncoalesced_accesses\s*=\s*(.*)'
++    - 'num_coalesced_load\s*=\s*(.*)'
++    - 'num_coalesced_store\s*=\s*(.*)'
++    - 'num_uncoalesced_load\s*=\s*(.*)'
++    - 'num_uncoalesced_store\s*=\s*(.*)'
+ 
+ 
+ # These stats are reset each kernel and should not be diff'd
+@@ -40,3 +46,7 @@ collect_rates:
+     - 'gpgpu_simulation_rate\s+=\s+(.*)\s+\(cycle\/sec\)'
+     - 'gpgpu_silicon_slowdown\s*=\s*(.*)x'
+     - 'gpu_tot_ipc\s*=\s*(.*)'
++    - 'L2_BW_total\s*=\s*(.*)\s+GB\/Sec'
++    - 'gpu_tot_occupancy\s*=\s*(.*)%'
++    - '\s+L1D_total_cache_miss_rate\s*=\s*(.*)'
++    - 'L2_total_cache_miss_rate\s*=\s*(.*)'
