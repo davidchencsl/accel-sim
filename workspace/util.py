@@ -1,6 +1,9 @@
 import os
 import shutil
 import subprocess
+from glob import glob
+
+import parse
 
 
 def parse_stat(benchmark, config):
@@ -12,10 +15,21 @@ def parse_stat(benchmark, config):
         (key, _, value) = line.decode('utf-8').partition("=")
         env[key] = value.strip()
     proc.communicate()
-    cmd = f"/home/davidchencsl/miniconda3/envs/gem5/bin/python ./util/job_launching/get_stats.py -B {benchmark} -C {config} > ece511.stats.csv"
+    cmd = f"/home/davidchencsl/miniconda3/envs/gem5/bin/python ./util/job_launching/get_stats.py -B {benchmark} -C {config} > tmp.stats.csv"
     proc = subprocess.Popen(cmd, shell=True, text=True, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.communicate()
-    stat = parse_stat_csv("./ece511.stats.csv")
+    stat = parse_stat_csv("./tmp.stats.csv")
+
+    # DRAM stats
+    log_file = glob(f"sim_run_11.5/{benchmark}/*/{config}/*.o1")[0]
+    dram_utils = []
+    with open(log_file, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            s = parse.search('bwutil = {:f}', line)
+            if s:
+                dram_utils.append(s[0])
+    stat['dram_util'] = sum(dram_utils) / len(dram_utils)
     os.chdir(cur_path)
     return stat
 

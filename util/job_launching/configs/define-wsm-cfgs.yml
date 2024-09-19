@@ -175,3 +175,37 @@ llama3_8b_d1_nmem=32:
     base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_nmem=32/gpgpusim.config"
 llama3_8b_d1_nmem=32:
     base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_nmem=32/gpgpusim.config"
+llama3_8b_d1_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_nmem=32/gpgpusim.config"
+llama3_8b_d1_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_nmem=32/gpgpusim.config"
+llama3_8b_d1_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_nmem=32/gpgpusim.config"
+llama3_8b_d1_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_nmem=32/gpgpusim.config"
+llama3_8b_d1_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_nmem=32/gpgpusim.config"
+llama3_8b_d1_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_nmem=32/gpgpusim.config"
+llama3_8b_d1_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_nmem=32/gpgpusim.config"
+llama3_8b_d1_nmem=32:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_nmem=32/gpgpusim.config"
+llama3_8b_d1_A100:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_A100/gpgpusim.config"
+llama3_8b_d1_A100:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_A100/gpgpusim.config"
+llama3_8b_d1_H100:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_H100/gpgpusim.config"
+llama3_8b_d1_A100_40GB:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_A100_40GB/gpgpusim.config"
+llama3_8b_d1_A100_80GB:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_A100_80GB/gpgpusim.config"
+llama3_8b_d1_H100_80GB:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_H100_80GB/gpgpusim.config"
+llama3_8b_d1_A100_40GB:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_A100_40GB/gpgpusim.config"
+llama3_8b_d1_A100_80GB:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_A100_80GB/gpgpusim.config"
+llama3_8b_d1_H100_80GB:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/llama3_8b_d1_H100_80GB/gpgpusim.config"
